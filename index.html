@@ -47,128 +47,143 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, update, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, update, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // PASTE YOUR CONFIG HERE
-        const firebaseConfig = {
-           apiKey: "AIzaSyA4sH5Z1fkX3NnUumwTvcbbBKoUmGyWsKc",
+// YOUR FIREBASE CONFIG
+const firebaseConfig = {
+    apiKey: "AIzaSyA4sH5Z1fkX3NnUumwTvcbbBKoUmGyWsKc",
     authDomain: "geoguesser-jntuh.firebaseapp.com",
     projectId: "geoguesser-jntuh",
     storageBucket: "geoguesser-jntuh.firebasestorage.app",
     messagingSenderId: "237725369276",
     appId: "1:237725369276:web:6b135abb4dc583695d21b9",
     measurementId: "G-GG8N57KCKJ"
-        };
+};
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
 
-       // 15 JNTUH LOCATIONS (Showing first 5 with real coordinates)
+// 15 JNTUH LOCATIONS
 const DATA = [
-    { 
-        id: 1, 
-        lat: 17.493320, 
-        lon: 78.391450, 
-        hint: "The Grand Entrance: Stand directly between the two massive orange pillars of the Main Gate.", 
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/JNTU_Hyderabad_Main_Gate.jpg/640px-JNTU_Hyderabad_Main_Gate.jpg" 
-    },
-    { 
-        id: 2, 
-        lat: 17.494150, 
-        lon: 78.392340, 
-        hint: "Knowledge Hub: Mark the ground at the very bottom of the Central Library entrance steps.", 
-        img: "https://lh5.googleusercontent.com/p/AF1QipN3X-J_v8Qv-Tz7Z8X1q1X1x1x1x1x1x1x1x1x1=w600-h400-p-k-no" 
-    },
-    { 
-        id: 3, 
-        lat: 17.495080, 
-        lon: 78.393220, 
-        hint: "IST Building: The home of Geoinformatics. Mark the entrance path leading to the department.", 
-        img: "https://lh5.googleusercontent.com/p/AF1QipO9wZ0v5P5-9z6v6z6z6z6z6z6z6z6z6z6z6z6z=w600-h400-p-k-no" 
-    },
-    { 
-        id: 4, 
-        lat: 17.491820, 
-        lon: 78.392150, 
-        hint: "JNTUH Auditorium: Stand in the center of the open space directly in front of the main porch.", 
-        img: "https://lh5.googleusercontent.com/p/AF1QipM7G-U_V7v-V7v-V7v-V7v-V7v-V7v-V7v-V7v-V7=w600-h400-p-k-no" 
-    },
-    { 
-        id: 5, 
-        lat: 17.493850, 
-        lon: 78.390550, 
-        hint: "Student Hub: The Canteen Courtyard. Mark the ground near the circular seating area.", 
-        img: "https://lh5.googleusercontent.com/p/AF1QipP5B-X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X_X=w600-h400-p-k-no" 
-    }
-    // You can add 10 more locations following this exact format!
+    { id: 1, lat: 17.493320, lon: 78.391450, hint: "The Grand Entrance: Stand between the two massive orange pillars of the Main Gate.", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/JNTU_Hyderabad_Main_Gate.jpg/640px-JNTU_Hyderabad_Main_Gate.jpg" },
+    { id: 2, lat: 17.494150, lon: 78.392340, hint: "Knowledge Hub: Mark the ground at the bottom of the Central Library entrance steps.", img: "https://via.placeholder.com/600x400?text=Central+Library" },
+    { id: 3, lat: 17.495080, lon: 78.393220, hint: "IST Building: The home of Geoinformatics. Mark the entrance path.", img: "https://via.placeholder.com/600x400?text=IST+Building" },
+    { id: 4, lat: 17.491820, lon: 78.392150, hint: "JNTUH Auditorium: Stand in the center of the open space in front of the main porch.", img: "https://via.placeholder.com/600x400?text=Auditorium" },
+    { id: 5, lat: 17.493850, lon: 78.390550, hint: "Student Hub: The Canteen Courtyard near the circular seating area.", img: "https://via.placeholder.com/600x400?text=Canteen" },
+    { id: 6, lat: 17.493100, lon: 78.393500, hint: "Bank Zone: Mark the spot near the SBI Bank / Post Office corner.", img: "https://via.placeholder.com/600x400?text=SBI+Bank" },
+    { id: 7, lat: 17.495800, lon: 78.391800, hint: "Sports Ground: Stand near the Cricket Ground pavilion entrance.", img: "https://via.placeholder.com/600x400?text=Ground" },
+    { id: 8, lat: 17.492500, lon: 78.390800, hint: "Admin Block: Mark the ground directly facing the Registrar's office entrance.", img: "https://via.placeholder.com/600x400?text=Admin+Block" },
+    { id: 9, lat: 17.494500, lon: 78.394500, hint: "Health Centre: Find the quiet path leading to the University Health Centre.", img: "https://via.placeholder.com/600x400?text=Health+Centre" },
+    { id: 10, lat: 17.496500, lon: 78.393000, hint: "Hostel Zone: Stand at the crossroad leading to the Boys Hostels.", img: "https://via.placeholder.com/600x400?text=Hostels" },
+    { id: 11, lat: 17.492000, lon: 78.394000, hint: "Mechanical Dept: Stand near the old workshop engine display.", img: "https://via.placeholder.com/600x400?text=Mechanical" },
+    { id: 12, lat: 17.493500, lon: 78.392500, hint: "Placement Cell: Mark the ground near the UIIC building entrance.", img: "https://via.placeholder.com/600x400?text=Placement+Cell" },
+    { id: 13, lat: 17.495200, lon: 78.391000, hint: "Civil Engineering: Mark the entrance of the CE department block.", img: "https://via.placeholder.com/600x400?text=Civil+Dept" },
+    { id: 14, lat: 17.494000, lon: 78.395500, hint: "Seminar Hall: Locate the entrance to the SIT Seminar building.", img: "https://via.placeholder.com/600x400?text=SIT" },
+    { id: 15, lat: 17.493300, lon: 78.391400, hint: "The Final Stand: Return to the flag post near the main administrative building.", img: "https://via.placeholder.com/600x400?text=Flag+Post" }
 ];
 
-        let index = 0, score = 0, map, userMarker;
+let index = 0, score = 0, map, userMarker;
 
-        document.getElementById('auth-btn').onclick = async () => {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('password').value;
-            try { await signInWithEmailAndPassword(auth, e, p); } 
-            catch { await createUserWithEmailAndPassword(auth, e, p); }
-        };
+// AUTHENTICATION LOGIC
+document.getElementById('auth-btn').onclick = async () => {
+    const e = document.getElementById('email').value;
+    const p = document.getElementById('password').value;
+    if(!e || !p) return alert("Enter credentials");
+    try { await signInWithEmailAndPassword(auth, e, p); } 
+    catch { await createUserWithEmailAndPassword(auth, e, p); }
+};
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('game-ui').classList.remove('hidden');
-                const snap = await get(ref(db, `leaderboard/${user.uid}`));
-                if (snap.exists()) { index = snap.val().mapped || 0; score = snap.val().score || 0; }
-                initMap();
-                loadTarget();
-            }
-        });
-
-        function initMap() {
-            map = L.map('map', { zoomControl: false }).setView([17.4933, 78.3914], 18);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
-            map.locate({ watch: true, enableHighAccuracy: true });
-            map.on('locationfound', (e) => {
-                document.getElementById('gps-acc').innerText = `GPS ACCURACY: ±${e.accuracy.toFixed(1)}M`;
-                if (!userMarker) userMarker = L.circleMarker(e.latlng, { radius: 6, className: 'user-dot' }).addTo(map);
-                else userMarker.setLatLng(e.latlng);
-            });
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('game-ui').classList.remove('hidden');
+        const snap = await get(ref(db, `leaderboard/${user.uid}`));
+        if (snap.exists()) { 
+            index = snap.val().mapped || 0; 
+            score = snap.val().score || 0; 
         }
+        initMap();
+        loadTarget();
+    }
+});
 
-        function loadTarget() {
-            if (index >= DATA.length) return alert("HUNT COMPLETE!");
-            const t = DATA[index];
-            document.getElementById('clue-img').src = t.img;
-            document.getElementById('clue-text').innerText = t.hint;
-            document.getElementById('loc-num').innerText = index + 1;
-            document.getElementById('score').innerText = score.toString().padStart(4, '0') + " PTS";
+function initMap() {
+    map = L.map('map', { zoomControl: false }).setView([17.4933, 78.3914], 17);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+    map.locate({ watch: true, enableHighAccuracy: true });
+
+    map.on('locationfound', (e) => {
+        const acc = e.accuracy.toFixed(1);
+        document.getElementById('gps-acc').innerText = `GPS ACCURACY: ±${acc}M`;
+        document.getElementById('gps-acc').className = acc < 15 ? 
+            "glass px-3 py-1 rounded-full text-[9px] font-mono text-green-400 self-center" : 
+            "glass px-3 py-1 rounded-full text-[9px] font-mono text-cyan-400 self-center";
+            
+        if (!userMarker) {
+            userMarker = L.circleMarker(e.latlng, { radius: 8, className: 'user-dot', color: '#06b6d4', fillOpacity: 1 }).addTo(map);
+        } else {
+            userMarker.setLatLng(e.latlng);
         }
+    });
 
-        document.getElementById('mark-btn').onclick = async () => {
-            const center = map.getCenter();
-            const target = DATA[index];
-            const dist = getDistance(center.lat, center.lng, target.lat, target.lon);
-            let pts = Math.floor(5000 * Math.exp(-dist / 50));
-            score += pts;
-            index++;
-            await update(ref(db, `leaderboard/${auth.currentUser.uid}`), {
-                email: auth.currentUser.email,
-                score: score,
-                mapped: index,
-                last_coord: `${center.lat.toFixed(5)},${center.lng.toFixed(5)}`
-            });
-            loadTarget();
-        };
+    map.on('locationerror', () => {
+        document.getElementById('gps-acc').innerText = "GPS ERROR: PLEASE ENABLE LOCATION";
+        document.getElementById('gps-acc').classList.add('text-red-500');
+    });
+}
 
-        function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3;
-            const dLat = (lat2-lat1)*Math.PI/180;
-            const dLon = (lon2-lon1)*Math.PI/180;
-            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        }
+function loadTarget() {
+    if (index >= DATA.length) {
+        document.getElementById('clue-text').innerText = "HUNT COMPLETE! YOU ARE A MASTER GEOGRAPHER.";
+        document.getElementById('mark-btn').innerText = "VIEW LEADERBOARD";
+        document.getElementById('mark-btn').onclick = () => location.reload();
+        return;
+    }
+    const t = DATA[index];
+    document.getElementById('clue-img').src = t.img;
+    document.getElementById('clue-text').innerText = t.hint;
+    document.getElementById('loc-num').innerText = index + 1;
+    document.getElementById('score').innerText = score.toString().padStart(4, '0') + " PTS";
+}
+
+document.getElementById('mark-btn').onclick = async () => {
+    if (index >= DATA.length) return;
+
+    // We use the map center (where the user is looking/standing)
+    const center = map.getCenter();
+    const target = DATA[index];
+    const dist = getDistance(center.lat, center.lng, target.lat, target.lon);
+    
+    // Scoring: 5000 points max, drops off as distance increases
+    let pts = Math.floor(5000 * Math.exp(-dist / 50)); 
+    if (pts < 100) pts = 100; // Minimum points for trying
+
+    score += pts;
+    index++;
+
+    await update(ref(db, `leaderboard/${auth.currentUser.uid}`), {
+        email: auth.currentUser.email,
+        score: score,
+        mapped: index,
+        last_coord: `${center.lat.toFixed(5)},${center.lng.toFixed(5)}`,
+        timestamp: Date.now()
+    });
+
+    alert(`Point Captured! Distance: ${Math.round(dist)}m. Points earned: ${pts}`);
+    loadTarget();
+};
+
+function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371e3; // Earth radius in meters
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLon = (lon2-lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
     </script>
 </body>
 </html>
